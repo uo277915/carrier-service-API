@@ -13,6 +13,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "express": "latest"
+  },
   "bugs": {
     "url": "https://github.com/uo277915/carrier-service-API/issues"
   },
