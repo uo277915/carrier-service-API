@@ -4,6 +4,7 @@ import { ratesModel } from "../models/Rates";
 //Get the rates given a weight
 export const getCarrierRates: RequestHandler = async (req, res) => {
   const { weight } = req.query;
+  const { toPostalCode } = req.query;
   if (!weight) {
     res.status(400).send("Missing weight");
     return;
@@ -14,11 +15,17 @@ export const getCarrierRates: RequestHandler = async (req, res) => {
     return;
   }
   const rates = await ratesModel.findOne({ weight: weightNumber });
+
   if (!rates) {
     res.status(404).send("No rates found");
     return;
   }
-  res.status(200).send(rates);
+
+  if ((toPostalCode as String).substring(0, 2) == "07") {
+    res.status(200).send(filerRatesByType(rates, "Baleares"));
+  } else {
+    res.status(200).send(filerRatesByType(rates, "National"));
+  }
 };
 
 //Create a new rate
@@ -37,3 +44,20 @@ export const createCarrierRates: RequestHandler = async (req, res) => {
   await newRate.save();
   res.status(201).json(newRate);
 };
+
+//Filter the rates given a type
+export function filerRatesByType(rates: any, type: string) {
+  let filterRates: { name: string; price: number; time: number }[] = [];
+  rates.carriers.forEach((carrier: any) => {
+    carrier.prices.forEach((price: any) => {
+      if (price.type == type) {
+        filterRates.push({
+          name: carrier.name,
+          price: price.price,
+          time: price.time,
+        });
+      }
+    });
+  });
+  return filterRates;
+}
