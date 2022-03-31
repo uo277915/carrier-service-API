@@ -21,9 +21,16 @@ export const getCarrierRates: RequestHandler = async (req, res) => {
     return;
   }
 
+  if (!toPostalCode){
+    res.status(200).send(filerRatesByType(rates, "National"));
+    return;
+  }
+
   if ((toPostalCode as String).substring(0, 2) == "07") {
     res.status(200).send(filerRatesByType(rates, "Baleares"));
-  } else {
+  } else if ((toPostalCode as String).substring(0,2) == "38" || (toPostalCode as String).substring(0,2) == "35") {
+    res.status(200).send(filerRatesByType(rates, "Canarias"));
+  } else{
     res.status(200).send(filerRatesByType(rates, "National"));
   }
 };
