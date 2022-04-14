@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 import express, { Application, RequestHandler } from "express";
 import cors from "cors";
 import promBundle from "express-prom-bundle";
@@ -8,8 +10,7 @@ const app: Application = express();
 const port: number = 8000;
 
 const mongoose = require("mongoose");
-const connectionString =
-  "mongodb+srv://dede:dedeen2a@carrierrates.m3qxn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const connectionString = process.env.MONGO_DB_URI;
 
 const metricsMiddleware: RequestHandler = promBundle({ includeMethod: true });
 app.use(metricsMiddleware);

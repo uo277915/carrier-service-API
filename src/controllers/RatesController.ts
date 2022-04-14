@@ -4,7 +4,7 @@ import { ratesModel } from "../models/Rates";
 //Get the rates given a weight
 export const getCarrierRates: RequestHandler = async (req, res) => {
   const { weight } = req.query;
-  const { toPostalCode } = req.query;
+  const { to } = req.query;
   if (!weight) {
     res.status(400).send("Missing weight");
     return;
@@ -21,16 +21,19 @@ export const getCarrierRates: RequestHandler = async (req, res) => {
     return;
   }
 
-  if (!toPostalCode){
+  if (!to) {
     res.status(200).send(filerRatesByType(rates, "National"));
     return;
   }
 
-  if ((toPostalCode as String).substring(0, 2) == "07") {
+  if ((to as String).substring(0, 2) == "07") {
     res.status(200).send(filerRatesByType(rates, "Baleares"));
-  } else if ((toPostalCode as String).substring(0,2) == "38" || (toPostalCode as String).substring(0,2) == "35") {
+  } else if (
+    (to as String).substring(0, 2) == "38" ||
+    (to as String).substring(0, 2) == "35"
+  ) {
     res.status(200).send(filerRatesByType(rates, "Canarias"));
-  } else{
+  } else {
     res.status(200).send(filerRatesByType(rates, "National"));
   }
 };
